@@ -8,6 +8,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: [true, "please add post description"],
     },
+    image: {
+      type: String,
+      required: false,
+    },
     postedBy: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
