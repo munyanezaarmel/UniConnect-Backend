@@ -1,5 +1,6 @@
 // const multer =require( 'multer');
 const postModel = require("../models/postModel");
+const commentModel=require("../models/commentModel")
 const { UploadToCloud } = require("../helpers/cloud");
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -43,7 +44,7 @@ const createPostController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-   return res.status(500).send({
+ return res.status(500).send({
       success: true,
       message: "Error in Create Post APi",
       error,
@@ -145,6 +146,34 @@ const updatePostController = async (req, res) => {
     });
   }
 };
+ const createComment = async (req, res) => {
+  try {
+    const post = await postModel.findById(req.params.id);
+    if (!post) {
+      return res.status(400).json({
+        status: "failed",
+        message: "comment added the id not",
+      });
+    }
+    const comment = new commentModel({
+      blogId: req.params.blogId,
+      createdBy: req.auth._id,
+      comment: req.body.comment,
+    });
+    post.comments.push(comment);
+    await post.save();
+    return res.status(201).json({
+      status: "success",
+      message: "comment created successfully",
+      comment,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: "success",
+      error: error,
+    });
+  }
+};
 
 module.exports = {
   createPostController,
@@ -152,4 +181,5 @@ module.exports = {
   getUserPostsController,
   deletePostController,
   updatePostController,
+  createComment 
 };

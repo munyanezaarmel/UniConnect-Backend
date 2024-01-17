@@ -9,6 +9,7 @@ const {
   getUserPostsController,
   deletePostController,
   updatePostController,
+  createComment,
 } = postController;
 
 //router object
@@ -29,6 +30,11 @@ router.post(
   "/create-post",
   requireSingIn,
   createPostController
+);
+router.post(
+  "/comment/:id",
+  requireSingIn,
+  createComment
 );
 
 //GET ALL POSTs
