@@ -157,7 +157,7 @@ const createComment = async (req, res) => {
     }
     const comment = new commentModel({
       blogId: req.params.blogId,
-      createdBy: req.auth.name,
+      createdBy: req.auth._id,
       comment: req.body.comment,
     });
     post.comments.push(comment);
