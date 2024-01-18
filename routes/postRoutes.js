@@ -10,6 +10,7 @@ const {
   deletePostController,
   updatePostController,
   createComment,
+  createLike
 } = postController;
 
 //router object
@@ -48,6 +49,7 @@ router.delete("/delete-post/:id", requireSingIn, deletePostController);
 
 //UPDATE POST
 router.put("/update-post/:id", requireSingIn, updatePostController);
+router.put("/like", requireSingIn, createLike);
 
 //export
 module.exports = router;

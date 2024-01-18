@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 //schema
 const postSchema = new mongoose.Schema(
   {
-  
     description: {
       type: String,
       required: [true, "please add post description"],
@@ -17,6 +16,7 @@ const postSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
     comments: {
       type: Array,
     },

@@ -1,6 +1,6 @@
 // const multer =require( 'multer');
 const postModel = require("../models/postModel");
-const commentModel=require("../models/commentModel")
+const commentModel = require("../models/commentModel");
 const { UploadToCloud } = require("../helpers/cloud");
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -31,20 +31,20 @@ const createPostController = async (req, res) => {
     //     message: "Please Provide All Fields",
     //   });
     // }
-  console.log(req.body)
+    console.log(req.body);
     const post = await postModel({
       description,
       image: result.secure_url,
       postedBy: req.auth._id,
     }).save();
-   return res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Post Created Successfully",
       post,
     });
   } catch (error) {
     console.log(error);
- return res.status(500).send({
+    return res.status(500).send({
       success: true,
       message: "Error in Create Post APi",
       error,
@@ -59,7 +59,7 @@ const getAllPostsContoller = async (req, res) => {
       .find()
       .populate("postedBy", "_id name")
       .sort({ createdAt: -1 });
-   return res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "All Posts Data",
       posts,
@@ -98,13 +98,13 @@ const deletePostController = async (req, res) => {
   try {
     const { id } = req.params;
     await postModel.findByIdAndDelete({ _id: id });
-   return res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "Your Post been deleted!",
     });
   } catch (error) {
     console.log(error);
-   return  res.status(500).send({
+    return res.status(500).send({
       success: false,
       message: "error in delete post api",
       error,
@@ -132,7 +132,7 @@ const updatePostController = async (req, res) => {
       },
       { new: true }
     );
-   return res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "Post Updated Successfully",
       updatedPost,
@@ -146,7 +146,7 @@ const updatePostController = async (req, res) => {
     });
   }
 };
- const createComment = async (req, res) => {
+const createComment = async (req, res) => {
   try {
     const post = await postModel.findById(req.params.id);
     if (!post) {
@@ -157,7 +157,7 @@ const updatePostController = async (req, res) => {
     }
     const comment = new commentModel({
       blogId: req.params.blogId,
-      createdBy: req.auth._id,
+      createdBy: req.auth.name,
       comment: req.body.comment,
     });
     post.comments.push(comment);
@@ -175,11 +175,30 @@ const updatePostController = async (req, res) => {
   }
 };
 
+const createLike = async (req, res) => {
+  try {
+    const result = await postModel.findByIdAndUpdate(
+      req.body.postId,
+      {
+        $push: { likes: req.auth._id },
+      },
+      {
+        new: true,
+      }
+    );
+    res.json(result);
+  } catch (error) {
+    return res.status(422).json({ error: error.message });
+  }
+  
+};
+
 module.exports = {
   createPostController,
   getAllPostsContoller,
   getUserPostsController,
   deletePostController,
   updatePostController,
-  createComment 
+  createComment,
+  createLike,
 };
