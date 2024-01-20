@@ -32,8 +32,8 @@ router.post(
   requireSingIn,
   createPostController
 );
-router.post(
-  "/comment/:id",
+router.put(
+  "/comment",
   requireSingIn,
   createComment
 );

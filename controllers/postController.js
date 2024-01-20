@@ -146,34 +146,6 @@ const updatePostController = async (req, res) => {
     });
   }
 };
-const createComment = async (req, res) => {
-  try {
-    const post = await postModel.findById(req.params.id);
-    if (!post) {
-      return res.status(400).json({
-        status: "failed",
-        message: "comment added the id not",
-      });
-    }
-    const comment = new commentModel({
-      blogId: req.params.blogId,
-      createdBy: req.auth._id,
-      comment: req.body.comment,
-    });
-    post.comments.push(comment);
-    await post.save();
-    return res.status(201).json({
-      status: "success",
-      message: "comment created successfully",
-      comment,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      status: "success",
-      error: error,
-    });
-  }
-};
 
 const createLike = async (req, res) => {
   try {
@@ -186,6 +158,29 @@ const createLike = async (req, res) => {
         new: true,
       }
     );
+    res.json(result);
+  } catch (error) {
+    return res.status(422).json({ error: error.message });
+  }
+  
+};
+const createComment = async (req, res) => {
+  try {
+    const comment = {
+      text:req.body.text,
+      postedBy:req.auth._id
+  }
+    const result = await postModel.findByIdAndUpdate(
+      req.body.postId,
+      {
+        $push:{comments:comment}
+      },
+      {
+        new: true,
+      }
+    )
+    .populate("comments.postedBy","_id name")
+    .populate("postedBy","_id name")
     res.json(result);
   } catch (error) {
     return res.status(422).json({ error: error.message });
