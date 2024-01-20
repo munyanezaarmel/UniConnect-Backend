@@ -58,6 +58,7 @@ const getAllPostsContoller = async (req, res) => {
     const posts = await postModel
       .find()
       .populate("postedBy", "_id name")
+      .populate("comments.postedBy", "_id name")
       .sort({ createdAt: -1 });
     return res.status(200).send({
       success: true,
