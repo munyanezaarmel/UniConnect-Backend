@@ -162,30 +162,29 @@ const createLike = async (req, res) => {
   } catch (error) {
     return res.status(422).json({ error: error.message });
   }
-  
 };
 const createComment = async (req, res) => {
   try {
     const comment = {
-      text:req.body.text,
-      postedBy:req.auth._id
-  }
-    const result = await postModel.findByIdAndUpdate(
-      req.body.postId,
-      {
-        $push:{comments:comment}
-      },
-      {
-        new: true,
-      }
-    )
-    .populate("comments.postedBy","_id name")
-    .populate("postedBy","_id name")
+      text: req.body.text,
+      postedBy: req.auth._id,
+    };
+    const result = await postModel
+      .findByIdAndUpdate(
+        req.body.postId,
+        {
+          $push: { comments: comment },
+        },
+        {
+          new: true,
+        }
+      )
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name");
     res.json(result);
   } catch (error) {
     return res.status(422).json({ error: error.message });
   }
-  
 };
 
 module.exports = {
